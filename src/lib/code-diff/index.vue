@@ -9,19 +9,17 @@
 <script>
 import { createPatch } from 'diff'
 import * as Diff2Html from 'diff2html'
-import hljs from 'highlight.js'
 import 'highlight.js/styles/googlecode.css'
 import 'diff2html/bundles/css/diff2html.min.css'
 export default {
   name: 'CodeDiff',
   directives: {
-    // This made everything slow AF
+    /* This made everything slow AF */
     // highlight: function (el) {
     //   const blocks = el.querySelectorAll('code')
     //   blocks.forEach((block) => {
-    //     console.log('wtf')
     //     hljs.highlightBlock(block)
-    //   })    
+    //   })
     // }
   },
   props: {
@@ -128,7 +126,7 @@ export default {
 }
 
 .d2h-wrapper .d2h-code-side-emptyplaceholder {
-  max-height: 19px;
+  max-height: 17px;
 }
 
 .d2h-wrapper .d2h-code-side-line,

@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("diff"), require("diff2html"), require("highlight.js"));
+		module.exports = factory(require("diff"), require("diff2html"));
 	else if(typeof define === 'function' && define.amd)
-		define(["diff", "diff2html", "highlight.js"], factory);
+		define(["diff", "diff2html"], factory);
 	else if(typeof exports === 'object')
-		exports["vue-code-diff"] = factory(require("diff"), require("diff2html"), require("highlight.js"));
+		exports["vue-code-diff"] = factory(require("diff"), require("diff2html"));
 	else
-		root["vue-code-diff"] = factory(root["diff"], root["diff2html"], root["highlight.js"]);
-})(self, function(__WEBPACK_EXTERNAL_MODULE__6801__, __WEBPACK_EXTERNAL_MODULE__6918__, __WEBPACK_EXTERNAL_MODULE__6872__) {
+		root["vue-code-diff"] = factory(root["diff"], root["diff2html"]);
+})(self, function(__WEBPACK_EXTERNAL_MODULE__6801__, __WEBPACK_EXTERNAL_MODULE__6918__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2040,7 +2040,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, "/*\n\nGoogle Code style (c) Aahan Kris
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.hljs {\r\n  display: inline-block;\r\n  padding: 0;\r\n  background: transparent;\r\n  vertical-align: middle;\r\n  height: 17px;\n}\n.d2h-wrapper {\r\n  position: relative;\n}\n.d2h-wrapper .d2h-file-header {\r\n  display: none;\n}\n.d2h-wrapper .d2h-files-diff {\r\n  position: relative;\n}\n.d2h-wrapper .d2h-file-side-diff {\r\n  margin-bottom: -5px;\n}\n.d2h-wrapper .d2h-files-diff > .d2h-file-side-diff ~ .d2h-file-side-diff {\r\n  position: absolute;\n}\n.d2h-wrapper .d2h-code-side-emptyplaceholder {\r\n  max-height: 19px;\n}\n.d2h-wrapper .d2h-code-side-line,\r\n.d2h-wrapper .d2h-code-line {\r\n  display: block;\r\n  width: auto;\n}\n.d2h-wrapper .d2h-code-side-line.d2h-info {\r\n  height: 18px;\n}\n.d2h-wrapper .d2h-code-linenumber,\r\n.d2h-code-side-linenumber {\r\n  height: 19px;\n}\r\n", "",{"version":3,"sources":["webpack://./src/lib/code-diff/index.vue"],"names":[],"mappings":";AAqGA;EACA,qBAAA;EACA,UAAA;EACA,uBAAA;EACA,sBAAA;EACA,YAAA;AACA;AAEA;EACA,kBAAA;AACA;AAEA;EACA,aAAA;AACA;AAEA;EACA,kBAAA;AACA;AAEA;EACA,mBAAA;AACA;AAEA;EACA,kBAAA;AACA;AAEA;EACA,gBAAA;AACA;AAEA;;EAEA,cAAA;EACA,WAAA;AACA;AAEA;EACA,YAAA;AACA;AAEA;;EAEA,YAAA;AACA","sourcesContent":["<template>\r\n  <div id=\"app\">\r\n    <div      \r\n      v-html=\"html\"\r\n    />\r\n  </div>\r\n</template>\r\n\r\n<script>\r\nimport { createPatch } from 'diff'\r\nimport * as Diff2Html from 'diff2html'\r\nimport hljs from 'highlight.js'\r\nimport 'highlight.js/styles/googlecode.css'\r\nimport 'diff2html/bundles/css/diff2html.min.css'\r\nexport default {\r\n  name: 'CodeDiff',\r\n  directives: {\r\n    // This made everything slow AF\r\n    // highlight: function (el) {\r\n    //   const blocks = el.querySelectorAll('code')\r\n    //   blocks.forEach((block) => {\r\n    //     console.log('wtf')\r\n    //     hljs.highlightBlock(block)\r\n    //   })    \r\n    // }\r\n  },\r\n  props: {\r\n    oldString: {\r\n      type: String,\r\n      default: ''\r\n    },\r\n    newString: {\r\n      type: String,\r\n      default: ''\r\n    },\r\n    context: {\r\n      type: Number,\r\n      default: 5\r\n    },\r\n    outputFormat: {\r\n      type: String,\r\n      default: 'line-by-line'\r\n    },\r\n    drawFileList: {\r\n      type: Boolean,\r\n      defalut: false\r\n    },\r\n    renderNothingWhenEmpty: {\r\n      type: Boolean,\r\n      default: false\r\n    },\r\n    diffStyle: {\r\n      type: String,\r\n      default: 'word'\r\n    },\r\n    fileName: {\r\n      type: String,\r\n      default: ''\r\n    },\r\n    isShowNoChange: {\r\n      type: Boolean,\r\n      default: false\r\n    }\r\n  },\r\n  computed: {\r\n    html () {\r\n      return this.createdHtml(this.oldString, this.newString, this.context, this.outputFormat, this.drawFileList, this.renderNothingWhenEmpty, this.fileName, this.isShowNoChange)\r\n    }\r\n  },\r\n  methods: {\r\n    createdHtml (oldString, newString, context, outputFormat, drawFileList, renderNothingWhenEmpty, fileName, isShowNoChange) {\r\n      function hljs (html) {\r\n        return html.replace(/<span class=\"d2h-code-line-ctn\">(.+?)<\\/span>/g, '<span class=\"d2h-code-line-ctn\"><code>$1</code></span>')\r\n      }\r\n      if (isShowNoChange) {\r\n        oldString = 'File Without Change\\tOldString: ======================== \\n' + oldString\r\n        newString = 'File Without Change\\tNewString: ======================== \\n' + newString\r\n      }\r\n      const args = [fileName, oldString, newString, '', '', { context: context }]\r\n      const dd = createPatch(...args)\r\n      const outStr = Diff2Html.parse(dd, {\r\n        inputFormat: 'diff',\r\n        outputFormat: outputFormat,\r\n        drawFileList: drawFileList,\r\n        matching: 'lines',\r\n        renderNothingWhenEmpty: renderNothingWhenEmpty\r\n      })\r\n      const html = Diff2Html.html(outStr, {\r\n        inputFormat: 'json',\r\n        outputFormat: outputFormat,\r\n        drawFileList: drawFileList,\r\n        matching: 'lines',\r\n        renderNothingWhenEmpty: renderNothingWhenEmpty\r\n      })\r\n      return hljs(html)\r\n    }\r\n  }\r\n}\r\n</script>\r\n\r\n<style lang=\"postcss\">\r\n.hljs {\r\n  display: inline-block;\r\n  padding: 0;\r\n  background: transparent;\r\n  vertical-align: middle;\r\n  height: 17px;\r\n}\r\n\r\n.d2h-wrapper {\r\n  position: relative;\r\n}\r\n\r\n.d2h-wrapper .d2h-file-header {\r\n  display: none;\r\n}\r\n\r\n.d2h-wrapper .d2h-files-diff {\r\n  position: relative;\r\n}\r\n\r\n.d2h-wrapper .d2h-file-side-diff {\r\n  margin-bottom: -5px;\r\n}\r\n\r\n.d2h-wrapper .d2h-files-diff > .d2h-file-side-diff ~ .d2h-file-side-diff {\r\n  position: absolute;\r\n}\r\n\r\n.d2h-wrapper .d2h-code-side-emptyplaceholder {\r\n  max-height: 19px;\r\n}\r\n\r\n.d2h-wrapper .d2h-code-side-line,\r\n.d2h-wrapper .d2h-code-line {\r\n  display: block;\r\n  width: auto;\r\n}\r\n\r\n.d2h-wrapper .d2h-code-side-line.d2h-info {\r\n  height: 18px;\r\n}\r\n\r\n.d2h-wrapper .d2h-code-linenumber,\r\n.d2h-code-side-linenumber {\r\n  height: 19px;\r\n}\r\n</style>\r\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.hljs {\n  display: inline-block;\n  padding: 0;\n  background: transparent;\n  vertical-align: middle;\n  height: 17px;\n}\n.d2h-wrapper {\n  position: relative;\n}\n.d2h-wrapper .d2h-file-header {\n  display: none;\n}\n.d2h-wrapper .d2h-files-diff {\n  position: relative;\n}\n.d2h-wrapper .d2h-file-side-diff {\n  margin-bottom: -5px;\n}\n.d2h-wrapper .d2h-files-diff > .d2h-file-side-diff ~ .d2h-file-side-diff {\n  position: absolute;\n}\n.d2h-wrapper .d2h-code-side-emptyplaceholder {\n  max-height: 17px;\n}\n.d2h-wrapper .d2h-code-side-line,\n.d2h-wrapper .d2h-code-line {\n  display: block;\n  width: auto;\n}\n.d2h-wrapper .d2h-code-side-line.d2h-info {\n  height: 18px;\n}\n.d2h-wrapper .d2h-code-linenumber,\n.d2h-code-side-linenumber {\n  height: 19px;\n}\n", "",{"version":3,"sources":["webpack://./src/lib/code-diff/index.vue"],"names":[],"mappings":";AAmGA;EACA,qBAAA;EACA,UAAA;EACA,uBAAA;EACA,sBAAA;EACA,YAAA;AACA;AAEA;EACA,kBAAA;AACA;AAEA;EACA,aAAA;AACA;AAEA;EACA,kBAAA;AACA;AAEA;EACA,mBAAA;AACA;AAEA;EACA,kBAAA;AACA;AAEA;EACA,gBAAA;AACA;AAEA;;EAEA,cAAA;EACA,WAAA;AACA;AAEA;EACA,YAAA;AACA;AAEA;;EAEA,YAAA;AACA","sourcesContent":["<template>\n  <div id=\"app\">\n    <div      \n      v-html=\"html\"\n    />\n  </div>\n</template>\n\n<script>\nimport { createPatch } from 'diff'\nimport * as Diff2Html from 'diff2html'\nimport 'highlight.js/styles/googlecode.css'\nimport 'diff2html/bundles/css/diff2html.min.css'\nexport default {\n  name: 'CodeDiff',\n  directives: {\n    /* This made everything slow AF */\n    // highlight: function (el) {\n    //   const blocks = el.querySelectorAll('code')\n    //   blocks.forEach((block) => {\n    //     hljs.highlightBlock(block)\n    //   })\n    // }\n  },\n  props: {\n    oldString: {\n      type: String,\n      default: ''\n    },\n    newString: {\n      type: String,\n      default: ''\n    },\n    context: {\n      type: Number,\n      default: 5\n    },\n    outputFormat: {\n      type: String,\n      default: 'line-by-line'\n    },\n    drawFileList: {\n      type: Boolean,\n      defalut: false\n    },\n    renderNothingWhenEmpty: {\n      type: Boolean,\n      default: false\n    },\n    diffStyle: {\n      type: String,\n      default: 'word'\n    },\n    fileName: {\n      type: String,\n      default: ''\n    },\n    isShowNoChange: {\n      type: Boolean,\n      default: false\n    }\n  },\n  computed: {\n    html () {\n      return this.createdHtml(this.oldString, this.newString, this.context, this.outputFormat, this.drawFileList, this.renderNothingWhenEmpty, this.fileName, this.isShowNoChange)\n    }\n  },\n  methods: {\n    createdHtml (oldString, newString, context, outputFormat, drawFileList, renderNothingWhenEmpty, fileName, isShowNoChange) {\n      function hljs (html) {\n        return html.replace(/<span class=\"d2h-code-line-ctn\">(.+?)<\\/span>/g, '<span class=\"d2h-code-line-ctn\"><code>$1</code></span>')\n      }\n      if (isShowNoChange) {\n        oldString = 'File Without Change\\tOldString: ======================== \\n' + oldString\n        newString = 'File Without Change\\tNewString: ======================== \\n' + newString\n      }\n      const args = [fileName, oldString, newString, '', '', { context: context }]\n      const dd = createPatch(...args)\n      const outStr = Diff2Html.parse(dd, {\n        inputFormat: 'diff',\n        outputFormat: outputFormat,\n        drawFileList: drawFileList,\n        matching: 'lines',\n        renderNothingWhenEmpty: renderNothingWhenEmpty\n      })\n      const html = Diff2Html.html(outStr, {\n        inputFormat: 'json',\n        outputFormat: outputFormat,\n        drawFileList: drawFileList,\n        matching: 'lines',\n        renderNothingWhenEmpty: renderNothingWhenEmpty\n      })\n      return hljs(html)\n    }\n  }\n}\n</script>\n\n<style lang=\"postcss\">\n.hljs {\n  display: inline-block;\n  padding: 0;\n  background: transparent;\n  vertical-align: middle;\n  height: 17px;\n}\n\n.d2h-wrapper {\n  position: relative;\n}\n\n.d2h-wrapper .d2h-file-header {\n  display: none;\n}\n\n.d2h-wrapper .d2h-files-diff {\n  position: relative;\n}\n\n.d2h-wrapper .d2h-file-side-diff {\n  margin-bottom: -5px;\n}\n\n.d2h-wrapper .d2h-files-diff > .d2h-file-side-diff ~ .d2h-file-side-diff {\n  position: absolute;\n}\n\n.d2h-wrapper .d2h-code-side-emptyplaceholder {\n  max-height: 17px;\n}\n\n.d2h-wrapper .d2h-code-side-line,\n.d2h-wrapper .d2h-code-line {\n  display: block;\n  width: auto;\n}\n\n.d2h-wrapper .d2h-code-side-line.d2h-info {\n  height: 18px;\n}\n\n.d2h-wrapper .d2h-code-linenumber,\n.d2h-code-side-linenumber {\n  height: 19px;\n}\n</style>\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 
@@ -2453,14 +2453,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__6801__;
 "use strict";
 module.exports = __WEBPACK_EXTERNAL_MODULE__6918__;
 
-/***/ }),
-
-/***/ 6872:
-/***/ (function(module) {
-
-"use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__6872__;
-
 /***/ })
 
 /******/ 	});
@@ -2569,8 +2561,6 @@ var es_string_replace = __webpack_require__(5306);
 var external_diff_ = __webpack_require__(6801);
 // EXTERNAL MODULE: external "diff2html"
 var external_diff2html_ = __webpack_require__(6918);
-// EXTERNAL MODULE: external "highlight.js"
-var external_highlight_js_ = __webpack_require__(6872);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(3379);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
@@ -2622,16 +2612,15 @@ var diff2html_min_update = injectStylesIntoStyleTag_default()(diff2html_min/* de
 
 
 
-
 /* harmony default export */ var code_diffvue_type_script_lang_js_ = ({
   name: 'CodeDiff',
-  directives: {// This made everything slow AF
+  directives: {
+    /* This made everything slow AF */
     // highlight: function (el) {
     //   const blocks = el.querySelectorAll('code')
     //   blocks.forEach((block) => {
-    //     console.log('wtf')
     //     hljs.highlightBlock(block)
-    //   })    
+    //   })
     // }
   },
   props: {
