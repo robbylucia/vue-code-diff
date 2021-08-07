@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <div
-      v-highlight
+    <div      
       v-html="html"
     />
   </div>
@@ -16,12 +15,14 @@ import 'diff2html/bundles/css/diff2html.min.css'
 export default {
   name: 'CodeDiff',
   directives: {
-    highlight: function (el) {
-      const blocks = el.querySelectorAll('code')
-      blocks.forEach((block) => {
-        hljs.highlightBlock(block)
-      })
-    }
+    // This made everything slow AF
+    // highlight: function (el) {
+    //   const blocks = el.querySelectorAll('code')
+    //   blocks.forEach((block) => {
+    //     console.log('wtf')
+    //     hljs.highlightBlock(block)
+    //   })    
+    // }
   },
   props: {
     oldString: {
